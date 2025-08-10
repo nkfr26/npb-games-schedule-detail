@@ -1,0 +1,54 @@
+name: NPB Schedule Scraper
+
+on:
+  schedule:
+    # 毎日午前9時（JST）に実行 (UTC 0:00)
+    - cron: "0 0 * * *"
+  workflow_dispatch: # 手動実行も可能にする
+  push:
+    branches: ["main"]
+    paths:
+      # スクレイピングコードが変更された場合も実行
+      - "**/*.ts"
+      - ".github/workflows/**"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # デフォルトのGITHUB_TOKENではなく、PAT（Personal Access Token）を使用する場合
+          # token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run scraper
+        run: npx ts-node index.ts
+
+      - name: Check for changes
+        id: check_changes
+        run: git diff --quiet docs/ || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/
+          git commit -m "Update NPB schedule data - $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
