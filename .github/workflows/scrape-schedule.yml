@@ -38,7 +38,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run scraper
-        run: npx ts-node index.ts
+        run: npx tsx index.ts
 
       - name: Check for changes
         id: check_changes
