@@ -1,7 +1,9 @@
 import { chromium } from "@playwright/test";
-import { writeFileSync } from "fs";
+import { mkdirSync, writeFileSync } from "fs";
 
 (async () => {
+  mkdirSync("docs", { recursive: true });
+
   const browser = await chromium.launch({ headless: true });
 
   const year = new Date().getFullYear();
