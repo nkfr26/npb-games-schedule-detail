@@ -31,30 +31,36 @@ import { mkdirSync, writeFileSync } from "fs";
 
         if (match.textContent === "\u00A0") return;
 
-        const team1 = match.querySelector(".team1")?.textContent;
-        const team2 = match.querySelector(".team2")?.textContent;
-        if (!team1 || !team2) return;
+        const [home, visitor] = [
+          match.querySelector(".team1")?.textContent,
+          match.querySelector(".team2")?.textContent,
+        ];
+        if (!home || !visitor) return;
 
-        const place = info.querySelector(".place")?.textContent;
-        const time = info.querySelector(".time")?.textContent;
+        const [place, time] = [
+          info.querySelector(".place")?.textContent.replace(/\s+/g, ""),
+          info.querySelector(".time")?.textContent,
+        ];
         if (!place || !time) return;
-
-        const pit = Array.from(tdPits.querySelectorAll(".pit"))
-          .map((tdPit) => tdPit.textContent?.trim())
-          .filter((tdPit) => tdPit !== undefined);
 
         return {
           date,
-          match: { home: team1, visitor: team2 },
-          info: { place: place.replace(/\s+/g, ""), time },
-          pit,
+          match: { home, visitor },
+          info: { place, time },
         };
       });
     });
 
+    const converted = games
+      .filter((game) => game !== undefined)
+      .map((game) => ({
+        ...game,
+        date: convertDate(game.date, year),
+      }));
+
     writeFileSync(
       `docs/schedule_${month}_detail.json`,
-      JSON.stringify(games.filter((game) => game !== undefined))
+      JSON.stringify(converted)
     );
     await page.close();
   });
@@ -62,3 +68,13 @@ import { mkdirSync, writeFileSync } from "fs";
   await Promise.all(promises);
   await browser.close();
 })();
+
+const convertDate = (original: string, year: number) => {
+  const match = original.match(/(\d+)\/(\d+)/);
+  if (!match) return "";
+
+  const [month, day] = [match[1]?.padStart(2, "0"), match[2]?.padStart(2, "0")];
+  if (!month || !day) return "";
+
+  return `${year}-${month}-${day}`;
+};
