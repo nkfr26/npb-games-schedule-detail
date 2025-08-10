@@ -47,11 +47,11 @@ import { mkdirSync, writeFileSync } from "fs";
           date,
           match: { home: team1, visitor: team2 },
           info: { place: place.replace(/\s+/g, ""), time },
-          comment: comment.querySelector(".comment")?.textContent || "",
           pit,
         };
       });
     });
+
     writeFileSync(
       `docs/schedule_${month}_detail.json`,
       JSON.stringify(games.filter((game) => game !== undefined))
