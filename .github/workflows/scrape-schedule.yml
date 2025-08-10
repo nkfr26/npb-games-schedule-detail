@@ -19,11 +19,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          # デフォルトのGITHUB_TOKENではなく、PAT（Personal Access Token）を使用する場合
-          # token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: true
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -40,37 +35,12 @@ jobs:
       - name: Run scraper
         run: npx tsx index.ts
 
-      - name: List generated files
-        run: |
-          echo "=== Current directory structure ==="
-          ls -la
-          echo "=== Checking docs directory ==="
-          ls -la docs/ || echo "docs directory not found"
-          echo "=== Finding JSON files ==="
-          find . -name "*.json" -type f
-
-      - name: Check for changes
-        id: check_changes
-        run: |
-          echo "=== Git status ==="
-          git status
-          echo "=== Git diff (staged and unstaged) ==="
-          git add -A docs/
-          git diff --cached --name-status
-          echo "=== Checking if changes exist ==="
-          if git diff --cached --quiet; then
-            echo "No changes detected"
-            echo "changes=false" >> $GITHUB_OUTPUT
-          else
-            echo "Changes detected"
-            echo "changes=true" >> $GITHUB_OUTPUT
-          fi
-
       - name: Commit and push changes
-        if: steps.check_changes.outputs.changes == 'true'
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git diff --cached --name-status
-          git commit -m "Update NPB schedule data - $(date '+%Y-%m-%d %H:%M:%S')"
-          git push
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          if ! git diff --staged --quiet; then
+            git commit -m "Update NPB schedule data - $(date '+%Y-%m-%d %H:%M:%S')"
+            git push
+          fi

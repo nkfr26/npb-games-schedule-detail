@@ -1,9 +1,7 @@
 import { chromium } from "@playwright/test";
-import { writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
+import { mkdirSync, writeFileSync } from "fs";
 
 (async () => {
-  // docsディレクトリを作成（存在しない場合）
   mkdirSync("docs", { recursive: true });
 
   const browser = await chromium.launch({ headless: true });
@@ -13,65 +11,54 @@ import { join } from "path";
 
   const promises = months.map(async (month) => {
     const page = await browser.newPage();
+    await page.goto(
+      `https://npb.jp/games/${year}/schedule_${month}_detail.html`
+    );
 
-    try {
-      await page.goto(
-        `https://npb.jp/games/${year}/schedule_${month}_detail.html`,
-        { waitUntil: "networkidle" } // ページの読み込みを確実に待つ
+    const games = await page.evaluate(() => {
+      const rows = Array.from(
+        document.querySelectorAll("#schedule_detail tbody tr")
       );
 
-      const games = await page.evaluate(() => {
-        const rows = Array.from(
-          document.querySelectorAll("#schedule_detail tbody tr")
+      let date: string;
+      return rows.map((row) => {
+        date = row.querySelector("th[rowspan]")?.textContent || date;
+
+        const [match, info, comment, tdPits] = Array.from(
+          row.querySelectorAll("td")
         );
+        if (!match || !info || !comment || !tdPits) return;
 
-        let date: string;
-        return rows.map((row) => {
-          date = row.querySelector("th[rowspan]")?.textContent || date;
+        if (match.textContent === "\u00A0") return;
 
-          const [match, info, comment, tdPits] = Array.from(
-            row.querySelectorAll("td")
-          );
-          if (!match || !info || !comment || !tdPits) return;
+        const team1 = match.querySelector(".team1")?.textContent;
+        const team2 = match.querySelector(".team2")?.textContent;
+        if (!team1 || !team2) return;
 
-          if (match.textContent === "\u00A0") return;
+        const place = info.querySelector(".place")?.textContent;
+        const time = info.querySelector(".time")?.textContent;
+        if (!place || !time) return;
 
-          const team1 = match.querySelector(".team1")?.textContent;
-          const team2 = match.querySelector(".team2")?.textContent;
-          if (!team1 || !team2) return;
+        const pit = Array.from(tdPits.querySelectorAll(".pit"))
+          .map((tdPit) => tdPit.textContent?.trim())
+          .filter((tdPit) => tdPit !== undefined);
 
-          const place = info.querySelector(".place")?.textContent;
-          const time = info.querySelector(".time")?.textContent;
-          if (!place || !time) return;
-
-          const pit = Array.from(tdPits.querySelectorAll(".pit"))
-            .map((tdPit) => tdPit.textContent?.trim())
-            .filter((tdPit) => tdPit !== undefined);
-
-          return {
-            date,
-            match: { home: team1, visitor: team2 },
-            info: { place: place.replace(/\s+/g, ""), time },
-            comment: comment.querySelector(".comment")?.textContent || "",
-            pit,
-          };
-        });
+        return {
+          date,
+          match: { home: team1, visitor: team2 },
+          info: { place: place.replace(/\s+/g, ""), time },
+          comment: comment.querySelector(".comment")?.textContent || "",
+          pit,
+        };
       });
-
-      const filePath = join("docs", `schedule_${month}_detail.json`);
-      const filteredGames = games.filter((game) => game !== undefined);
-
-      console.log(`Writing ${filteredGames.length} games to ${filePath}`);
-      writeFileSync(filePath, JSON.stringify(filteredGames, null, 2));
-    } catch (error) {
-      console.error(`Error processing month ${month}:`, error);
-    } finally {
-      await page.close();
-    }
+    });
+    writeFileSync(
+      `docs/schedule_${month}_detail.json`,
+      JSON.stringify(games.filter((game) => game !== undefined))
+    );
+    await page.close();
   });
 
   await Promise.all(promises);
   await browser.close();
-
-  console.log("Scraping completed");
 })();
