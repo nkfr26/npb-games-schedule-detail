@@ -24,11 +24,8 @@ import { mkdirSync, writeFileSync } from "fs";
       return rows.map((row) => {
         date = row.querySelector("th[rowspan]")?.textContent || date;
 
-        const [match, info, comment, tdPits] = Array.from(
-          row.querySelectorAll("td")
-        );
-        if (!match || !info || !comment || !tdPits) return;
-
+        const [match, info] = Array.from(row.querySelectorAll("td"));
+        if (!match || !info) return;
         if (match.textContent === "\u00A0") return;
 
         const [home, visitor] = [
@@ -51,16 +48,16 @@ import { mkdirSync, writeFileSync } from "fs";
       });
     });
 
-    const converted = games
+    const formatted = games
       .filter((game) => game !== undefined)
       .map((game) => ({
         ...game,
-        date: convertDate(game.date, year),
+        date: formatDate(year, game.date),
       }));
 
     writeFileSync(
       `docs/schedule_${month}_detail.json`,
-      JSON.stringify(converted)
+      JSON.stringify(formatted, null, 2)
     );
     await page.close();
   });
@@ -69,11 +66,14 @@ import { mkdirSync, writeFileSync } from "fs";
   await browser.close();
 })();
 
-const convertDate = (original: string, year: number) => {
-  const match = original.match(/(\d+)\/(\d+)/);
-  if (!match) return "";
+const formatDate = (year: number, dateString: string) => {
+  const dateMatch = dateString.match(/(\d+)\/(\d+)/);
+  if (!dateMatch) return "";
 
-  const [month, day] = [match[1]?.padStart(2, "0"), match[2]?.padStart(2, "0")];
+  const [month, day] = [
+    dateMatch[1]?.padStart(2, "0"),
+    dateMatch[2]?.padStart(2, "0"),
+  ];
   if (!month || !day) return "";
 
   return `${year}-${month}-${day}`;
