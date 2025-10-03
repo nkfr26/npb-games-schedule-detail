@@ -163,5 +163,93 @@
       "place": "甲子園",
       "time": "18:00"
     }
+  },
+  {
+    "date": "2025-10-11",
+    "match": {
+      "home": "DeNA",
+      "visitor": "巨人"
+    },
+    "info": {
+      "place": "横浜",
+      "time": "14:00"
+    }
+  },
+  {
+    "date": "2025-10-11",
+    "match": {
+      "home": "日本ハム",
+      "visitor": "オリックス"
+    },
+    "info": {
+      "place": "エスコンＦ",
+      "time": "14:00"
+    }
+  },
+  {
+    "date": "2025-10-12",
+    "match": {
+      "home": "DeNA",
+      "visitor": "巨人"
+    },
+    "info": {
+      "place": "横浜",
+      "time": "14:00"
+    }
+  },
+  {
+    "date": "2025-10-12",
+    "match": {
+      "home": "日本ハム",
+      "visitor": "オリックス"
+    },
+    "info": {
+      "place": "エスコンＦ",
+      "time": "14:00"
+    }
+  },
+  {
+    "date": "2025-10-13",
+    "match": {
+      "home": "DeNA",
+      "visitor": "巨人"
+    },
+    "info": {
+      "place": "横浜",
+      "time": "14:00"
+    }
+  },
+  {
+    "date": "2025-10-13",
+    "match": {
+      "home": "日本ハム",
+      "visitor": "オリックス"
+    },
+    "info": {
+      "place": "エスコンＦ",
+      "time": "14:00"
+    }
+  },
+  {
+    "date": "2025-10-14",
+    "match": {
+      "home": "DeNA",
+      "visitor": "巨人"
+    },
+    "info": {
+      "place": "横浜",
+      "time": "18:00"
+    }
+  },
+  {
+    "date": "2025-10-14",
+    "match": {
+      "home": "日本ハム",
+      "visitor": "オリックス"
+    },
+    "info": {
+      "place": "エスコンＦ",
+      "time": "18:00"
+    }
   }
 ]
