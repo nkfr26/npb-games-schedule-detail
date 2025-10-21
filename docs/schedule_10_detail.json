@@ -286,24 +286,57 @@
     }
   },
   {
-    "date": "2025-10-21",
+    "date": "2025-10-25",
     "match": {
       "home": "ソフトバンク",
-      "visitor": "日本ハム"
+      "visitor": "阪神"
     },
     "info": {
       "place": "みずほPayPay",
+      "time": "18:30"
+    }
+  },
+  {
+    "date": "2025-10-26",
+    "match": {
+      "home": "ソフトバンク",
+      "visitor": "阪神"
+    },
+    "info": {
+      "place": "みずほPayPay",
+      "time": "18:30"
+    }
+  },
+  {
+    "date": "2025-10-28",
+    "match": {
+      "home": "阪神",
+      "visitor": "ソフトバンク"
+    },
+    "info": {
+      "place": "甲子園",
       "time": "18:00"
     }
   },
   {
-    "date": "2025-10-22",
+    "date": "2025-10-29",
     "match": {
-      "home": "ソフトバンク",
-      "visitor": "日本ハム"
+      "home": "阪神",
+      "visitor": "ソフトバンク"
     },
     "info": {
-      "place": "みずほPayPay",
+      "place": "甲子園",
+      "time": "18:00"
+    }
+  },
+  {
+    "date": "2025-10-30",
+    "match": {
+      "home": "阪神",
+      "visitor": "ソフトバンク"
+    },
+    "info": {
+      "place": "甲子園",
       "time": "18:00"
     }
   }

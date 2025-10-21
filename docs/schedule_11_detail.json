@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "date": "2025-11-01",
+    "match": {
+      "home": "ソフトバンク",
+      "visitor": "阪神"
+    },
+    "info": {
+      "place": "みずほPayPay",
+      "time": "18:30"
+    }
+  },
+  {
+    "date": "2025-11-02",
+    "match": {
+      "home": "ソフトバンク",
+      "visitor": "阪神"
+    },
+    "info": {
+      "place": "みずほPayPay",
+      "time": "18:00"
+    }
+  }
+]
